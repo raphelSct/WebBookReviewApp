@@ -21,7 +21,7 @@ export async function get_one(req: Request, res: Response) {
         res.status(404).send(' 404 Author not found');
     }
     else {
-        res.status(200).json({tag});
+        res.status(200).json(tag);
     }
 };
 
@@ -39,18 +39,16 @@ export async function get_all_of_book(req: Request, res: Response) {
         res.status(404).send(' 404 Author not found');
     }
     else {
-        res.status(200).json({tags});
+        res.status(200).json(tags);
     }
 };
 
 export async function create_one(req: Request, res: Response) {
     assert(req.body, TagCreationData);
     const tag= await prisma.tag.create({
-        data : {
-            name : 'Fantasy',
-        }
+      data: req.body
     })          
-    res.status(201).json({tag}); 
+    res.status(201).json(tag); 
 };
 
 
@@ -60,12 +58,10 @@ export async function update_one(req: Request, res: Response) {
         where: {
           id : Number(req.params.tag_id),
         },
-        data: {
-          name: 'Horror',
-        },
+        data: req.body
       })
     assert(tagUpdate, TagCreationData);
-    res.status(201).json({tagUpdate});
+    res.status(201).json(tagUpdate);
 };
 
 export async function delete_one(req: Request, res: Response) {

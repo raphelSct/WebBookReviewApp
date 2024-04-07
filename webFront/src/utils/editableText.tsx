@@ -44,7 +44,7 @@ export function EditableText({value, onUpdated}: {
                 </form>
             ) : (
                 <div id="edit-value">
-                    <h3>{value}</h3>
+                    <h2>{value}</h2>
                     <Pen size={16} onClick={() => setEditing(true)}/>
                 </div>
             )}

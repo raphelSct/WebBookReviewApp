@@ -732,6 +732,14 @@ const authors = [
   }
 ];
 
+const users = [
+  {
+    email: "eliott.schott@gmail.com",
+    password: "$2b$10$3",
+    username: "bababoy"
+  },
+]
+
 async function main() {
   await Promise.all(tags.map((tag) => {
     return prisma.tag.create({
@@ -742,6 +750,12 @@ async function main() {
   await Promise.all(authors.map((author) => {
     return prisma.author.create({
       data: author
+    });
+  }));
+
+  await Promise.all(users.map((user) => {
+    return prisma.user.create({
+      data: user
     });
   }));
 }

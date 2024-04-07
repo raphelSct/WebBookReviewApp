@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import { get_one_book, get_one, update_book } from "../api";
-import { Author, Book, BookUpdateData } from "../types";
+import { get_one_book, get_one, update_book, add_comment_to_book} from "../api";
+import { Author, Book, BookUpdateData, CommentsCreationData } from "../types";
 import { BookTags } from "./booktags";
 import { EditableText } from "../utils/editableText";
+import { CommentForm } from "../utils/addcomment";
+import { Comments } from "./comments";
 
 
 export function BookDetails(){
@@ -56,6 +58,13 @@ export function BookDetails(){
         }
     }
 
+    function addComment(content: string) {
+        if (book) {
+            const comment: CommentsCreationData = { content: content };
+            add_comment_to_book(comment, book.id);
+        }
+    }
+
     return (
     <div>
         <p>{loading ? "Loading..." : ""}</p>
@@ -64,9 +73,13 @@ export function BookDetails(){
         <p>Author:{" "}
             <NavLink to={`/authors/${author && author.id}`}>
                 {author && `${author.firstname} ${author.lastname}`}
-            </NavLink>
-        </p>
-        {book && (<BookTags {...book}/>)}
-    </div>
-);
-}
+                        </NavLink>
+                    </p>
+                    {book && (<BookTags {...book}/>)}
+                    <h3>Comments</h3>
+                    <Comments bookId={book_id ? Number(book_id) : 0} />
+                    <CommentForm addComment={addComment} bookId={book ? book.id : 0} />
+                </div>
+            );            
+    }
+

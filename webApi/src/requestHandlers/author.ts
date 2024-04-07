@@ -8,9 +8,10 @@ import { Prisma } from "@prisma/client";
 
 
 export async function get_all(req: Request, res: Response) {
-  const AuthorCount = await prisma.author.count()
   const { hasBooks } = req.query;
   const { lastname }: { lastname?: string } = req.query
+  const { skip, take } = req.query
+
 
   const assoc: Prisma.AuthorInclude = {
     books: {
@@ -43,9 +44,12 @@ export async function get_all(req: Request, res: Response) {
     }},
     orderBy : {
       lastname : 'asc'
-    }
+    },
+    skip: skip ? Number(skip) : undefined,
+    take: take ? Number(take) : undefined
   });
-  res.set({integer:AuthorCount});
+  const authorCount = await prisma.author.count({ where: filter });
+  res.header('X-Total-Count', String(authorCount));
   res.json(authors);
 };
 
@@ -59,19 +63,16 @@ export async function get_one(req: Request, res: Response) {
         res.status(404).send(' 404 Author not found');
     }
     else {
-        res.status(200).json({author});
+        res.status(200).json(author);
     }
 };
 
 export async function create_one(req: Request, res: Response) {
     assert(req.body, AuthorCreationData);
     const authors= await prisma.author.create({
-        data : {
-            firstname : 'Agatha',
-            lastname : 'Christhie',
-        }
+      data: req.body
     })          
-    res.status(201).json({authors}); 
+    res.status(201).json(authors); 
 };
 
 
@@ -81,13 +82,10 @@ export async function update_one(req: Request, res: Response) {
         where: {
           id : Number(req.params.author_id),
         },
-        data: {
-          firstname: 'Victor',
-          lastname: 'Hugo',
-        },
+        data: req.body
       })
     assert(authorUpdate, AuthorCreationData);
-    res.status(201).json({authorUpdate});
+    res.status(201).json(authorUpdate);
 };
 
 export async function delete_one(req: Request, res: Response) {
@@ -96,6 +94,6 @@ export async function delete_one(req: Request, res: Response) {
           id : Number(req.params.author_id),
         },
       })
-    res.status(204).json({deleteAuthor}); 
+    res.status(204).json(deleteAuthor); 
 };
   

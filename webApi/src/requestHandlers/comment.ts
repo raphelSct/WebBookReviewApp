@@ -15,9 +15,33 @@ export async function get_all_from_one(req: Request, res: Response) {
           },
         
     })          
-    res.status(201).json({comment}); 
+    res.status(201).json(comment); 
 };
 
+export async function create_one_without_auth(req: Request, res: Response) {
+    const book_id = Number(req.params.book_id);
+    const comment  = req.body.content;
+    console.log(comment+" "+book_id);
+    try{
+        // Création du nouveau commentaire associé au livre avec l'ID de l'utilisateur authentifié
+        const newComment = await prisma.comment.create({
+            data: {
+                userId: 1,
+                bookId : book_id,
+                content: comment,
+                created_at: new Date(),
+                updated_at: new Date(),
+            }
+        });
+
+        // Envoyer le nouveau commentaire créé au format JSON dans la réponse
+        res.status(201).json( newComment );
+        console.log(newComment);
+    } catch (error) {
+        console.error('Erreur lors de la création du commentaire :', error);
+        res.status(500).json({ message: 'Une erreur est survenue lors de la création du commentaire' });
+    }
+}
 
 
 export async function create_one(req: AuthRequest, res: Response) {
@@ -36,7 +60,7 @@ export async function create_one(req: AuthRequest, res: Response) {
         });
 
         // Envoyer le nouveau commentaire créé au format JSON dans la réponse
-        res.status(201).json({ newComment });
+        res.status(201).json( newComment );
     } catch (error) {
         console.error('Erreur lors de la création du commentaire :', error);
         res.status(500).json({ message: 'Une erreur est survenue lors de la création du commentaire' });

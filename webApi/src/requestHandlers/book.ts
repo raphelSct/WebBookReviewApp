@@ -8,33 +8,42 @@ import { log } from "console";
 
 
 export async function get_all(req: Request, res: Response) {
+  const {skip, take}=req.query;
+
   const assoc: Prisma.BookInclude = {
     author: {
-      select: { id: true, firstname: true,lastname: true },
-      
+      select: { id: true, firstname: true, lastname: true },
     },
-    tags : {
-      select : {name:true},
+    tags: {
+      select: { name: true },
     },
-    comments : {
-      select : {userId : true, content:true, bookId:true}
+    comments: {
+      select: { userId: true, content: true, bookId: true },
     },
-    ratings : {
-      select : { value : true, bookId:true, userId : true}
-    }
+    ratings: {
+      select: { value: true, bookId: true, userId: true },
+    },
   };
-  const { title }: { title?: string } = req.query
-    const books=await prisma.book.findMany({
-      where : {
-        title : { contains : title || undefined}
-      },
-      include : assoc,
-      orderBy : {
-        title : 'asc'
-      } 
-    });   
-    res.json({books});  
+
+  const { title }: { title?: string } = req.query;
+
+  const filter: Prisma.BookWhereInput = {};
+  if (title) {
+    filter.title = { contains: String(title) };
+  }
+
+  const books = await prisma.book.findMany({
+    where: filter,
+    include: assoc,
+    orderBy: { title: 'asc' },
+    skip: skip ? Number(skip) : undefined,
+    take: take ? Number(take) : undefined
+  });
+  const bookCount = await prisma.book.count({ where: filter });
+  res.header('X-Total-Count', String(bookCount));
+  res.json(books);
 };
+
 
 export async function get_one(req: Request, res: Response) {
   const assoc: Prisma.BookInclude = {
@@ -62,7 +71,7 @@ export async function get_one(req: Request, res: Response) {
         res.status(404).send(' 404 Author not found');
     }
     else {
-        res.status(200).json({book});
+        res.status(200).json(book);
     }
 };
 
@@ -81,7 +90,7 @@ export async function get_all_of_author(req: Request, res: Response) {
         res.status(404).send(' 404 Author not found');
     }
     else {
-        res.status(200).json({book});
+        res.status(200).json(book);
     }
 };
 
@@ -93,7 +102,7 @@ export async function create_one_of_author(req: Request, res: Response) {
             authorId : Number(req.params.author_id)
         }
     })   
-    res.status(201).json({books});
+    res.status(201).json(books);
 };
 
 
@@ -107,7 +116,7 @@ export async function update_one(req: Request, res: Response) {
           title: 'Le grand Remplacement',
         },
       })
-    res.status(201).json({bookUpdate}); 
+    res.status(201).json(bookUpdate); 
 };
 
 export async function delete_one(req: Request, res: Response) {
@@ -116,5 +125,5 @@ export async function delete_one(req: Request, res: Response) {
           id : Number(req.params.book_id),
         },
       })
-    res.status(204).json({deleteBook}); 
+    res.status(204).json(deleteBook); 
 };

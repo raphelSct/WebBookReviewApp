@@ -7,6 +7,7 @@ import * as user from './requestHandlers/user';
 import * as comment from './requestHandlers/comment';
 import * as ratings from './requestHandlers/ratings';
 import { StructError } from 'superstruct';
+import cors from 'cors';
 const jwt = require('jsonwebtoken');
 
 const prisma = new PrismaClient();
@@ -22,7 +23,15 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.header('Access-Control-Expose-Headers', 'X-Total-Count');
+  next();
+});
+
 app.use(express.json());
+
+app.use(cors());
+
 
 app.get('/authors', author.get_all);
 
@@ -73,7 +82,8 @@ app.post('/signup',user.create);
 app.post('/signin',user.signin);
 
 app.get('/books/:book_id/comments', comment.get_all_from_one);
-app.post('/books/:book_id/comments',user.auth_client, comment.create_one);
+//app.post('/books/:book_id/comments',user.auth_client, comment.create_one);
+app.post('/books/:book_id/comments',comment.create_one_without_auth);
 
 app.get('/books/:book_id/ratings',ratings.get_all_from_one);
 app.post('/books/:book_id/ratings',user.auth_client,ratings.create_one);

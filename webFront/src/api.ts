@@ -1,5 +1,5 @@
-import { AuthorCreationData, GetAuthorParams, Author, BookCreationData, GetBooksParams, AuthorUpdateData, BookUpdateData, Book } from "./types";
-
+import { AuthorCreationData, GetAuthorParams, Author, BookCreationData, GetBooksParams, AuthorUpdateData, BookUpdateData, Book, CommentsCreationData } from "./types";
+import { toast } from "sonner"
 const apiBasename="http://localhost:3000"
 
 export async function get_authors(gap: GetAuthorParams) {
@@ -26,6 +26,7 @@ export async function add_authors(adc: AuthorCreationData){
     });
     const result = await res.json();
     console.log("Success:", result);
+    toast("Author added !")
   }
     catch(error){
       console.error("Error:", error);
@@ -42,6 +43,7 @@ export async function delete_author(id: number){
     });
     const result = await res.json();
     console.log("Success:", result);
+    toast("Author deleted")
   }
     catch(error){
       console.error("Error:", error);
@@ -84,6 +86,7 @@ export async function add_book(bcd: BookCreationData, authorId: number){
   });
   const result = await res.json();
   console.log("Success:", result);
+  toast("Book added !")
 }
   catch(error){
     console.error("Error:", error);
@@ -100,6 +103,7 @@ export async function delete_book(id: number){
     });
     const result = await res.json();
     console.log("Success:", result);
+    toast("Book deleted")
   }
     catch(error){
       console.error("Error:", error);
@@ -198,6 +202,7 @@ export async function update_author(aud: AuthorUpdateData, id: number){
   });
   const result = await res.json();
   console.log("Success:", result);
+  toast("Author updated !")
 }
   catch(error){
     console.error("Error:", error);
@@ -217,8 +222,43 @@ export async function update_book(bud: BookUpdateData, id: number){
   });
   const result = await res.json();
   console.log("Success:", result);
+  toast("Book updated !")
 }
   catch(error){
     console.error("Error:", error);
+  }
+}
+
+export async function add_comment_to_book(ccd: CommentsCreationData, book_id: number){
+  try{
+    console.log(ccd)
+    const res = await fetch(`${apiBasename}/books/${book_id}/comments`,{
+      method:"POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(ccd)
+    });
+    const result = await res.json();
+    console.log("Success:", result);
+    toast("Succesfully added comment !")
+  }
+  catch(error){
+    console.error("Error:", error);
+  }
+}
+
+export async function get_comments_from_book(book_id: number){
+  try{
+    const res = await fetch(`${apiBasename}/books/${book_id}/comments`);
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg);
+    }
+    const comments = await res.json();
+    return comments;
+  }
+  catch(error){
+    console.error("Error: ", error);
   }
 }

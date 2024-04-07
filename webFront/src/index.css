@@ -7,7 +7,7 @@
   box-sizing: border-box;
 
   color: rgba(60, 60, 60, 0.87);
-  background-color: #e3e3e3;
+  background-color: #ffffff;
 }
 
 *,
@@ -187,9 +187,9 @@ ul {
 }
 
 #sidebar {
-  width: 20rem;
+  width: 21rem;
   border-right: solid 1px #333333;
-  padding-right: 1rem;
+  padding-right: 0.5rem;
   display: flex;
   flex-direction: column;
 }

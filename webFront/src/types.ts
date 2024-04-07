@@ -60,3 +60,19 @@ export interface PaginationProps {
     total: number;
     onPageChange: (index: number) => void;
 }
+
+export interface Comment {
+    id: number;
+    content: string;
+    bookId: number;
+    authorId: number;
+}
+
+export interface CommentsCreationData{
+    content: String;
+}
+
+export interface CommentFormProps {
+    addComment: (content: string) => void;
+    bookId: number;
+}

@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { Toaster } from "@/components/ui/sonner"
 
 export default function Root() {
   return (
@@ -13,6 +14,7 @@ export default function Root() {
       </header>
       <main>
         <Outlet />
+        <Toaster />
       </main>
       <footer>
         <em>Made with React & react-router</em>

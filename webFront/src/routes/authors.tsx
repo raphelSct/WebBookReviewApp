@@ -3,6 +3,8 @@ import { get_authors, add_authors, delete_author } from '../api';
 import { NavLink, Outlet } from 'react-router-dom';
 import { Author, AuthorCreationData, GetAuthorParams } from '../types';
 import { Pagination } from '../utils/pagination';
+import { Separator } from '@radix-ui/react-separator';
+import { toast } from "sonner"
 
 export function Authors(){
     const [authors, setAuthors] = useState<Author[]>([]);
@@ -85,9 +87,8 @@ export function Authors(){
                     </label>
                     <button type="submit">Sauvegarder</button>
                 </form>
-                
                 <div>
-                    <h3>Rechercher un auteur</h3>
+                    <h2>Rechercher un auteur</h2>
                     <form onSubmit={handleFilter}>
                         <label>
                             Recherche : <input name="search" />
