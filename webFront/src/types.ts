@@ -66,13 +66,15 @@ export interface Comment {
     content: string;
     bookId: number;
     authorId: number;
+    username: string;
 }
 
 export interface CommentsCreationData{
+    username?: string;
     content: String;
 }
 
 export interface CommentFormProps {
-    addComment: (content: string) => void;
+    addComment: (content: CommentsCreationData) => void;
     bookId: number;
 }

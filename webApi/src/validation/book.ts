@@ -1,11 +1,11 @@
-import { object, string, size } from 'superstruct';
+import { object, string, integer, optional, size } from 'superstruct';
 
 export const BookCreationData = object({
-  firstname: size(string(), 1, 50),
-  lastname: size(string(), 1, 50),
+  title: size(string(), 1, 50),
+  publication_year: optional(integer())
 });
 
 export const BookUpdateData = object({
-    firstname: size(string(), 1, 50),
-    lastname: size(string(), 1, 50),
-  });
+  title: optional(size(string(), 1, 50)),
+  publication_year: optional(integer())
+});

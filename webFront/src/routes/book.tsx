@@ -58,16 +58,19 @@ export function BookDetails(){
         }
     }
 
-    function addComment(content: string) {
+    function addComment(ccd: CommentsCreationData) {
         if (book) {
-            const comment: CommentsCreationData = { content: content };
-            add_comment_to_book(comment, book.id);
+            add_comment_to_book(ccd, book.id);
+
         }
     }
 
     return (
-    <div>
-        <p>{loading ? "Loading..." : ""}</p>
+    <>
+        
+        {book && author ? (
+            <div>
+            <p>{loading ? "Loading..." : ""}</p>
         <EditableText value={book && book.title || ""} onUpdated={updateTitle} />
         Publication year :  <EditableText value={book && book.publication_year.toString() || ""} onUpdated={updatePublicationYear}/>
         <p>Author:{" "}
@@ -80,6 +83,7 @@ export function BookDetails(){
                     <Comments bookId={book_id ? Number(book_id) : 0} />
                     <CommentForm addComment={addComment} bookId={book ? book.id : 0} />
                 </div>
-            );            
-    }
-
+            ) : ( <h2>Book not found</h2>)}
+        </>
+    );
+}

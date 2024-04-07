@@ -30,12 +30,12 @@ export function AuthorDetails() {
             }
             return prevAuthor;
         });
-        const updateData:AuthorUpdateData = {firstname: newFirstname};
-        if (author){
+        const updateData: AuthorUpdateData = { firstname: newFirstname, lastname: author?.lastname || '' };
+        if (author) {
             update_author(updateData, author.id);
         }
     }
-
+    
     function updateLastname(newLastname: string) {
         setAuthor((prevAuthor) => {
             if (prevAuthor !== undefined) {
@@ -43,8 +43,8 @@ export function AuthorDetails() {
             }
             return prevAuthor;
         });
-        const updateData:AuthorUpdateData = {lastname: newLastname};
-        if (author){
+        const updateData: AuthorUpdateData = { firstname: author?.firstname || '', lastname: newLastname };
+        if (author) {
             update_author(updateData, author.id);
         }
     }

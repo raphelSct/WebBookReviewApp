@@ -5,43 +5,42 @@ import { BookCreationData } from '../validation/book';
 import { BookUpdateData } from '../validation/book';
 import { Prisma } from "@prisma/client";
 import { log } from "console";
+import { HttpError } from "../error";
 
 
 export async function get_all(req: Request, res: Response) {
-  const {skip, take}=req.query;
-
+  const { title, skip, take } = req.query
   const assoc: Prisma.BookInclude = {
     author: {
-      select: { id: true, firstname: true, lastname: true },
+      select: { id: true, firstname: true,lastname: true },
     },
-    tags: {
-      select: { name: true },
+    tags : {
+      select : {name:true},
     },
-    comments: {
-      select: { userId: true, content: true, bookId: true },
+    comments : {
+      select : {userId : true, content:true, bookId:true}
     },
-    ratings: {
-      select: { value: true, bookId: true, userId: true },
-    },
+    ratings : {
+      select : { value : true, bookId:true, userId : true}
+    }
   };
-
-  const { title }: { title?: string } = req.query;
-
   const filter: Prisma.BookWhereInput = {};
-  if (title) {
-    filter.title = { contains: String(title) };
+  if(title){
+    filter.title={contains: String(title)}
   }
 
-  const books = await prisma.book.findMany({
-    where: filter,
-    include: assoc,
-    orderBy: { title: 'asc' },
-    skip: skip ? Number(skip) : undefined,
-    take: take ? Number(take) : undefined
-  });
-  const bookCount = await prisma.book.count({ where: filter });
-  res.header('X-Total-Count', String(bookCount));
-  res.json(books);
+    const books=await prisma.book.findMany({
+      where : filter,
+      include : assoc,
+      orderBy : {
+        title : 'asc'
+      },
+      skip: skip ? Number(skip) : undefined,
+      take: take ? Number(take) : undefined
+    });   
+    const bookCount = await prisma.book.count({ where: filter });
+    res.header('X-Total-Count', String(bookCount));
+    res.json(books);  
 };
 
 
@@ -95,35 +94,49 @@ export async function get_all_of_author(req: Request, res: Response) {
 };
 
 export async function create_one_of_author(req: Request, res: Response) {
-    assert(req.body, BookCreationData);
-    const books= await prisma.book.create({
-        data : {
-            title : 'Les miserables',
-            authorId : Number(req.params.author_id)
+  assert(req.body, BookCreationData);
+  const book = await prisma.book.create({
+    data: {
+      ...req.body,
+      author: {
+        connect: {
+          id: Number(req.params.author_id)
         }
-    })   
-    res.status(201).json(books);
+      }
+    }
+  });
+  res.status(201).json(book);
 };
+
 
 
 export async function update_one(req: Request, res: Response) {
-    assert(req.body, BookUpdateData);
-    const bookUpdate = await prisma.book.update({
-        where: {
-          id : Number(req.params.book_id),
-        },
-        data: {
-          title: 'Le grand Remplacement',
-        },
-      })
-    res.status(201).json(bookUpdate); 
+  assert(req.body, BookUpdateData);
+  try {
+    const book = await prisma.book.update({
+      where: {
+        id: Number(req.params.book_id)
+      },
+      data: req.body
+    });
+    res.json(book);
+  }
+  catch (err) {
+    throw new HttpError('Book not found', 404);
+  }
 };
 
+
 export async function delete_one(req: Request, res: Response) {
-    const deleteBook = await prisma.book.delete({
-        where: {
-          id : Number(req.params.book_id),
-        },
-      })
-    res.status(204).json(deleteBook); 
+  try {
+    await prisma.book.delete({
+      where: {
+        id: Number(req.params.book_id)
+      }
+    });
+    res.status(204).send();
+  }
+  catch (err) {
+    throw new HttpError('Book not found', 404);
+  }
 };

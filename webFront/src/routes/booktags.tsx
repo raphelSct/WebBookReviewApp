@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Tag, Book } from '../types';
-import { get_tags, add_tag, get_tags_of_book } from '../api';
+import { get_tags, add_tag, get_tags_of_book, delete_tag } from '../api';
 import { ComboboxDemo } from '../utils/combobox';
 
 
@@ -19,7 +19,7 @@ export function BookTags(book : Book){
     useEffect(() => {
         loadBookTags();
     }
-    ,[book.id]);
+    ,[]);
 
     async function loadBookTags() {
         const temp = await get_tags_of_book(book.id);
@@ -33,12 +33,20 @@ export function BookTags(book : Book){
 
     async function handleAdd() {
         try{
-            console.log(book.id, selectedTag);
             await add_tag(book.id, selectedTag);
             loadBookTags();
         }
         catch(error){
             setError(error=>error)
+        }
+    }
+
+    async function deleteTag(id: number) {
+        try {
+            await delete_tag(book.id, id);
+            loadBookTags();
+        } catch (error) {
+            setError(error => error);
         }
     }
 
@@ -52,9 +60,9 @@ export function BookTags(book : Book){
             Book tags :
             {bookTags.map((tag) => (
                 <span key={tag.id} className="badge">
-                {tag.name}
-                <button>x</button>
-              </span>
+                    {tag.name}
+                    <button type="button" onClick={() => deleteTag(tag.id)}>X</button>
+                </span>
             ))}
         <form>
             <br></br>

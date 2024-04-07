@@ -20,28 +20,31 @@ export async function get_all_from_one(req: Request, res: Response) {
 
 export async function create_one_without_auth(req: Request, res: Response) {
     const book_id = Number(req.params.book_id);
-    const comment  = req.body.content;
-    console.log(comment+" "+book_id);
-    try{
-        // Création du nouveau commentaire associé au livre avec l'ID de l'utilisateur authentifié
+    const comment = req.body.content;
+    const username = req.body.username; // Assurez-vous que le nom d'utilisateur est fourni dans la requête
+
+    console.log(comment + " " + book_id + " " + username);
+
+    try {
         const newComment = await prisma.comment.create({
             data: {
-                userId: 1,
-                bookId : book_id,
+                userId: 1, // Utilisation du nom d'utilisateur fourni dans la requête
+                bookId: book_id,
                 content: comment,
                 created_at: new Date(),
-                updated_at: new Date(),
+                updated_at: new Date(),  
+                username: username              
             }
         });
 
-        // Envoyer le nouveau commentaire créé au format JSON dans la réponse
-        res.status(201).json( newComment );
+        res.status(201).json(newComment);
         console.log(newComment);
     } catch (error) {
         console.error('Erreur lors de la création du commentaire :', error);
         res.status(500).json({ message: 'Une erreur est survenue lors de la création du commentaire' });
     }
 }
+
 
 
 export async function create_one(req: AuthRequest, res: Response) {
@@ -51,6 +54,7 @@ export async function create_one(req: AuthRequest, res: Response) {
         // Création du nouveau commentaire associé au livre avec l'ID de l'utilisateur authentifié
         const newComment = await prisma.comment.create({
             data: {
+                username: req.auth?.username,
                 bookId : book_id,
                 userId: req.auth?.id,
                 content: comment,

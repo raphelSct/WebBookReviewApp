@@ -94,6 +94,7 @@ export async function add_book(bcd: BookCreationData, authorId: number){
 }
 
 export async function delete_book(id: number){
+
   try
     {const res = await fetch(`${apiBasename}/books/${id}`,{
       method:"DELETE",
@@ -114,7 +115,7 @@ export async function get_books(gbp: GetBooksParams){
   try{
     let list = ((gbp.page??0)-1)*(gbp.pageSize??0);
 
-    const res = await fetch(`${apiBasename}/books?skip=${list}&take=${gbp.pageSize}`+ (gbp.title ? `&lastname=${gbp.title}` : ''));
+    const res = await fetch(`${apiBasename}/books?skip=${list}&take=${gbp.pageSize}`+ (gbp.title ? `&title=${gbp.title}` : ''));
     if (!res.ok) {
       const msg = await res.text();
       throw new Error(msg);
@@ -176,6 +177,22 @@ export async function add_tag(book_id: number, tag_id: number){
   }
 }
 
+export async function delete_tag(book_id: number, tag_id: number){
+  try
+    {const res = await fetch(`${apiBasename}/books/${book_id}/tags/${tag_id}`,{
+      method:"DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await res.json();
+    console.log("Success:", result);
+  }
+    catch(error){
+      console.error("Error:", error);
+    }
+}
+
 export async function get_tags_of_book(book_id: number){
   try{
     const res = await fetch(`${apiBasename}/books/${book_id}/tags`);
@@ -192,6 +209,7 @@ export async function get_tags_of_book(book_id: number){
 }
 
 export async function update_author(aud: AuthorUpdateData, id: number){
+  console.log(JSON.stringify(aud) + " " + id)
   try
   {const res = await fetch(`${apiBasename}/authors/${id}`,{
     method:"PATCH",

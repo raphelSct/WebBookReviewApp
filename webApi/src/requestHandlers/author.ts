@@ -4,6 +4,7 @@ import { assert, integer } from 'superstruct';
 import { AuthorCreationData } from '../validation/author';
 import { AuthorUpdateData } from '../validation/author';
 import { Prisma } from "@prisma/client";
+import { HttpError } from "../error";
 
 
 
@@ -77,23 +78,34 @@ export async function create_one(req: Request, res: Response) {
 
 
 export async function update_one(req: Request, res: Response) {
-    assert(req.body, AuthorUpdateData);
-    const authorUpdate = await prisma.author.update({
-        where: {
-          id : Number(req.params.author_id),
-        },
-        data: req.body
-      })
-    assert(authorUpdate, AuthorCreationData);
-    res.status(201).json(authorUpdate);
+  assert(req.body, AuthorUpdateData);
+  try {
+    const author = await prisma.author.update({
+      where: {
+        id: Number(req.params.author_id)
+      },
+      data: req.body
+    });
+    res.json(author);
+  }
+  catch (err) {
+    throw new HttpError('Author not found', 404);
+  }
 };
 
+
 export async function delete_one(req: Request, res: Response) {
-    const deleteAuthor = await prisma.author.delete({
-        where: {
-          id : Number(req.params.author_id),
-        },
-      })
-    res.status(204).json(deleteAuthor); 
+  try {
+    await prisma.author.delete({
+      where: {
+        id: Number(req.params.author_id)
+      }
+    });
+    res.status(204).send();
+  }
+  catch (err) {
+    throw new HttpError('Author not found', 404);
+  }
 };
+
   

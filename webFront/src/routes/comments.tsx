@@ -5,12 +5,11 @@ import {get_comments_from_book} from "../api";
 
 export function Comments({bookId}: {bookId: number}){
     const [comments, setComments] = useState<Comment[]>([]);
-    
 
     useEffect(() => {
         loadComments()
     }
-    ,[bookId, comments]);
+    ,[bookId]);
 
     async function loadComments(){
         const response = await get_comments_from_book(bookId);
@@ -21,7 +20,7 @@ export function Comments({bookId}: {bookId: number}){
         <div>
             <ul>
                 {comments.map((comment) => (
-                    <li key={comment.id}>{comment.content}</li>
+                    <li key={comment.id}>{comment.username} : {comment.content}</li>
                 ))}
             </ul>
         </div>
