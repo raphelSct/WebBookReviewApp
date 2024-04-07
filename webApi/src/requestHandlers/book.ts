@@ -19,9 +19,6 @@ export async function get_all(req: Request, res: Response) {
     },
     comments : {
       select : {userId : true, content:true, bookId:true}
-    },
-    ratings : {
-      select : { value : true, bookId:true, userId : true}
     }
   };
   const filter: Prisma.BookWhereInput = {};
@@ -55,9 +52,6 @@ export async function get_one(req: Request, res: Response) {
     },
     comments : {
       select : {userId : true, content:true, bookId:true}
-    },
-    ratings : {
-      select : { value : true, bookId:true, userId : true}
     }
   };
     const book = await prisma.book.findUnique({

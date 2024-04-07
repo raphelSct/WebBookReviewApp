@@ -78,3 +78,20 @@ export interface CommentFormProps {
     addComment: (content: CommentsCreationData) => void;
     bookId: number;
 }
+
+export interface GradeProps {
+    addGrade: (grade: GradeCreationData) => void;
+    bookId: number;
+}
+
+export interface GradeCreationData{
+    pseudo?: string;
+    value: number;
+}
+
+export interface Rating {
+    id: number;
+    value: number;
+    bookId: number;
+    pseudo: string;
+}

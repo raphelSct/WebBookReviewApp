@@ -1,4 +1,4 @@
-import { AuthorCreationData, GetAuthorParams, Author, BookCreationData, GetBooksParams, AuthorUpdateData, BookUpdateData, Book, CommentsCreationData } from "./types";
+import { AuthorCreationData, GetAuthorParams, Author, BookCreationData, GetBooksParams, AuthorUpdateData, BookUpdateData, Book, CommentsCreationData, GradeCreationData } from "./types";
 import { toast } from "sonner"
 const apiBasename="http://localhost:3000"
 
@@ -275,6 +275,40 @@ export async function get_comments_from_book(book_id: number){
     }
     const comments = await res.json();
     return comments;
+  }
+  catch(error){
+    console.error("Error: ", error);
+  }
+}
+
+export async function add_rating_to_book(gcd: GradeCreationData, book_id: number){
+  try{
+    console.log(gcd)
+    const res = await fetch(`${apiBasename}/books/${book_id}/ratings`,{
+      method:"POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(gcd)
+    });
+    const result = await res.json();
+    console.log("Success:", result);
+    toast("Succesfully added rating !")
+  }
+  catch(error){
+    console.error("Error:", error);
+  }
+}
+
+export async function get_ratings(book_id: number){
+  try{
+    const res = await fetch(`${apiBasename}/books/${book_id}/ratings`);
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg);
+    }
+    const ratings = await res.json();
+    return ratings;
   }
   catch(error){
     console.error("Error: ", error);

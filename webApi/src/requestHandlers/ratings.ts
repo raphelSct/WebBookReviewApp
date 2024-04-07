@@ -26,8 +26,30 @@ export async function create_one(req: AuthRequest, res: Response) {
         const newRating = await prisma.rating.create({
             data: {
                 bookId : book_id,
-                userId: req.auth?.id,
                 value: value,
+                pseudo: "test",
+            }
+        });
+
+        // Envoyer le nouveau commentaire créé au format JSON dans la réponse
+        res.status(201).json( newRating );
+    } catch (error) {
+        console.error('Erreur lors de la création du commentaire :', error);
+        res.status(500).json({ message: 'Une erreur est survenue lors de la création du commentaire' });
+    }
+}
+
+export async function create_one_without_auth(req: Request, res: Response) {
+    const book_id = Number(req.params.book_id);
+    const value  = Number(req.body.value);
+    const pseudo = req.body.pseudo;
+    try{
+        // Création du nouveau commentaire associé au livre avec l'ID de l'utilisateur authentifié
+        const newRating = await prisma.rating.create({
+            data: {
+                bookId : book_id,
+                value: value,
+                pseudo: pseudo,
             }
         });
 

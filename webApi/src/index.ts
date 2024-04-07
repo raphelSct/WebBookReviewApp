@@ -86,7 +86,8 @@ app.get('/books/:book_id/comments', comment.get_all_from_one);
 app.post('/books/:book_id/comments',comment.create_one_without_auth);
 
 app.get('/books/:book_id/ratings',ratings.get_all_from_one);
-app.post('/books/:book_id/ratings',user.auth_client,ratings.create_one);
+//app.post('/books/:book_id/ratings',user.auth_client,ratings.create_one);
+app.post('/books/:book_id/ratings',ratings.create_one_without_auth);
 
 
 app.get('/books/:book_id/ratings/average',ratings.get_average);

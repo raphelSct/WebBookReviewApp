@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import { get_one_book, get_one, update_book, add_comment_to_book} from "../api";
-import { Author, Book, BookUpdateData, CommentsCreationData } from "../types";
+import { get_one_book, get_one, update_book, add_comment_to_book, add_rating_to_book} from "../api";
+import { Author, Book, BookUpdateData, CommentsCreationData, GradeCreationData } from "../types";
 import { BookTags } from "./booktags";
 import { EditableText } from "../utils/editableText";
 import { CommentForm } from "../utils/addcomment";
 import { Comments } from "./comments";
+import { StarsForm } from "@/utils/addstars";
+import { Ratings } from "./grades";
 
 
 export function BookDetails(){
@@ -61,7 +63,12 @@ export function BookDetails(){
     function addComment(ccd: CommentsCreationData) {
         if (book) {
             add_comment_to_book(ccd, book.id);
+        }
+    }
 
+    function addGrade(gcd : GradeCreationData){
+        if(book){
+            add_rating_to_book(gcd, book.id);
         }
     }
 
@@ -71,8 +78,9 @@ export function BookDetails(){
         {book && author ? (
             <div>
             <p>{loading ? "Loading..." : ""}</p>
-        <EditableText value={book && book.title || ""} onUpdated={updateTitle} />
-        Publication year :  <EditableText value={book && book.publication_year.toString() || ""} onUpdated={updatePublicationYear}/>
+            <div>
+            <EditableText value={book && book.title || ""} onUpdated={updateTitle} /> - <EditableText value={book && book.publication_year.toString() || ""} onUpdated={updatePublicationYear}/>
+            </div>
         <p>Author:{" "}
             <NavLink to={`/authors/${author && author.id}`}>
                 {author && `${author.firstname} ${author.lastname}`}
@@ -82,6 +90,9 @@ export function BookDetails(){
                     <h3>Comments</h3>
                     <Comments bookId={book_id ? Number(book_id) : 0} />
                     <CommentForm addComment={addComment} bookId={book ? book.id : 0} />
+                    <Ratings bookId={book ? book.id : 0} />
+                    <StarsForm addGrade={addGrade} bookId={book ? book.id : 0} />
+                    
                 </div>
             ) : ( <h2>Book not found</h2>)}
         </>
